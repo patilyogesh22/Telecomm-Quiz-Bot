@@ -22,10 +22,8 @@ jobs:
 
           script: |
             docker pull yogeshpatil22/telebot:latest
-            docker-compose down
-            docker-compose pull
+            docker-compose down --remove-orphans
+            docker image rm yogeshpatil22/telebot:latest || true
+            docker pull yogeshpatil22/telebot:latest
             docker-compose up -d --force-recreate
-
-            # Clean unused images and containers to free up space
-            
             docker image prune -f
