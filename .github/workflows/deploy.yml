@@ -24,3 +24,5 @@ jobs:
             docker pull yogeshpatil22/telebot:latest
             docker-compose down
             docker-compose up -d
+            # Clean unused images and containers to free up space
+            docker system prune -a
