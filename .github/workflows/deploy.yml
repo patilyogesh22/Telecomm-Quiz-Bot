@@ -22,11 +22,5 @@ jobs:
 
           script: |
             docker pull yogeshpatil22/telebot:latest
-            docker stop telebot || true
-            docker rm telebot || true
-
-            docker run -d \
-              -p 80:5000 \
-              --name telebot \
-              --restart unless-stopped \
-              yogeshpatil22/telebot:latest
+            docker-compose down
+            docker-compose up -d
