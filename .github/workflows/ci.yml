@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
 
       - name: Build Docker Image
-        run: docker build -t yogeshpatil22/telebot:latest .
+        run: docker build --no-cache -t yogeshpatil22/telebot:latest .
 
       - name: Push Docker Image
         run: docker push yogeshpatil22/telebot:latest

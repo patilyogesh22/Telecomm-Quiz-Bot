@@ -23,6 +23,9 @@ jobs:
           script: |
             docker pull yogeshpatil22/telebot:latest
             docker-compose down
-            docker-compose up -d
+            docker-compose pull
+            docker-compose up -d --force-recreate
+
             # Clean unused images and containers to free up space
-            docker system prune -a
+            
+            docker image prune -f
