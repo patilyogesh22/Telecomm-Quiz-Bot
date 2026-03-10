@@ -1,146 +1,32 @@
-# ═══════════════════════════════════════════════════════════════
-#  TeleBot — CI/CD Pipeline
-#  Trigger: push to main branch
-#  Flow: Test → Build Docker → Push ECR → Deploy ECS
-# ═══════════════════════════════════════════════════════════════
-name: CI/CD → AWS ECS
+name: Deploy to EC2
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-env:
-  AWS_REGION:      us-east-1           # ← change to your region
-  ECR_REPOSITORY:  telebot             # ← your ECR repo name
-  ECS_CLUSTER:     telebot-cluster     # ← your ECS cluster name
-  ECS_SERVICE:     telebot-service     # ← your ECS service name
-  CONTAINER_NAME:  telebot             # ← container name in task def
+  workflow_run:
+    workflows: ["CI Pipeline - Build & Push Docker Image"]
+    types:
+      - completed
 
 jobs:
-
-  # ── Job 1: Test ───────────────────────────────────
-  test:
-    name: ✅ Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-
-      - name: Install dependencies
-        run: pip install -r backend/requirements.txt
-
-      - name: Run backend health check (import test)
-        run: |
-          cd backend
-          python -c "
-          import sys
-          try:
-              import flask, chromadb
-              import quiz_engine, vector_db
-              print('✅ All imports OK')
-              qs = quiz_engine.get_questions(difficulty='all', count=5)
-              assert len(qs) > 0, 'No questions returned'
-              print(f'✅ Quiz engine OK — {len(qs)} questions')
-          except Exception as e:
-              print(f'❌ Test failed: {e}')
-              sys.exit(1)
-          "
-
-      - name: Lint with flake8 (warnings only)
-        run: |
-          pip install flake8
-          flake8 backend/ --max-line-length=120 --ignore=E501,W503 --exit-zero
-
-  # ── Job 2: Build & Push to ECR ────────────────────
-  build-and-push:
-    name: 🐳 Build & Push Docker Image
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    outputs:
-      image: ${{ steps.build-image.outputs.image }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region:            ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build, tag & push image to ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG:    ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag  $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                      $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Image summary
-        run: echo "✅ Pushed ${{ steps.build-image.outputs.image }}"
-
-  # ── Job 3: Deploy to ECS ──────────────────────────
   deploy:
-    name: 🚀 Deploy to AWS ECS
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    needs: build-and-push
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region:            ${{ env.AWS_REGION }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Download current ECS task definition
-        run: |
-          aws ecs describe-task-definition \
-            --task-definition ${{ env.ECS_SERVICE }} \
-            --query taskDefinition \
-            > task-definition.json
+          script: |
+            docker pull yogeshpatil22/telebot:latest
+            docker stop telebot || true
+            docker rm telebot || true
 
-      - name: Update task definition with new image
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name:  ${{ env.CONTAINER_NAME }}
-          image:           ${{ needs.build-and-push.outputs.image }}
-          environment-variables: |
-            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
-
-      - name: Deploy updated task definition to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition:  ${{ steps.task-def.outputs.task-definition }}
-          service:          ${{ env.ECS_SERVICE }}
-          cluster:          ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
-
-      - name: 🎉 Deployment complete
-        run: echo "TeleBot deployed successfully to ECS!"
+            docker run -d \
+              -p 80:5000 \
+              --name telebot \
+              --restart unless-stopped \
+              yogeshpatil22/telebot:latest
