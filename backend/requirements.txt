@@ -7,3 +7,4 @@ chromadb==0.4.22
 sentence-transformers==2.6.0
 torch==2.2.2+cpu
 numpy==1.26.4
+gunicorn
