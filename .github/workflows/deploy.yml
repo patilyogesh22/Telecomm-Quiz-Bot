@@ -21,7 +21,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
-            docker pull yogeshpatil22/telebot:latest
             docker-compose down --remove-orphans
             docker image rm yogeshpatil22/telebot:latest || true
             docker pull yogeshpatil22/telebot:latest
