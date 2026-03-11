@@ -3,414 +3,319 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TeleBot — AI Telecomm Quiz &amp; Tutor</title>
+  <title>TeleBot — AI Telecomm Intelligence</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="shell">
 
-<!-- Ambient glow orbs (CSS-animated) -->
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-
-<!-- ═══════════════════════════════════════════
-     APP SHELL
-═══════════════════════════════════════════ -->
-<div class="app-shell">
-
-  <!-- ── SIDEBAR ─────────────────────────── -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-logo">📡</div>
-      <div class="brand-name">TELEBOT</div>
-      <div class="brand-sub">AI QUIZ &amp; TUTOR SYSTEM</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">📡</div>
+      <div>
+        <div class="sb-name">TeleBot</div>
+        <div class="sb-tag">AI Intelligence</div>
+      </div>
     </div>
-
-    <nav class="sidenav">
-      <div class="nav-section-label">MAIN</div>
-
-      <button class="nav-btn active" onclick="navigate('home', this)">
-        <span class="nav-ic">⌂</span> Dashboard
+    <nav class="sb-nav">
+      <div class="nav-sec">Navigate</div>
+      <button class="nb active" id="nb-home"  onclick="navigate('home',this)">
+        <div class="nb-ic">🏠</div><span class="nb-lbl">Dashboard</span>
       </button>
-      <button class="nav-btn" onclick="navigate('quiz', this)">
-        <span class="nav-ic">◈</span> Quiz Mode
+      <button class="nb" id="nb-quiz"  onclick="navigate('quiz',this)">
+        <div class="nb-ic">🎯</div><span class="nb-lbl">Quiz Mode</span>
+        <span class="nb-pill">15 Qs</span>
       </button>
-      <button class="nav-btn" onclick="navigate('tutor', this)">
-        <span class="nav-ic">⬡</span> AI Tutor
+      <button class="nb" id="nb-tutor" onclick="navigate('tutor',this)">
+        <div class="nb-ic">🤖</div><span class="nb-lbl">AI Tutor</span>
+        <span class="nb-pill live">AI</span>
       </button>
-
-      <div class="nav-section-label" style="margin-top:12px">KNOWLEDGE</div>
-
-      <button class="nav-btn" onclick="navigate('plans', this)">
-        <span class="nav-ic">▤</span> Plan Explorer
+      <div class="nav-sec" style="margin-top:8px">Knowledge</div>
+      <button class="nb" id="nb-plans" onclick="navigate('plans',this)">
+        <div class="nb-ic">📋</div><span class="nb-lbl">Plan Explorer</span>
       </button>
-      <button class="nav-btn" onclick="navigate('vdb', this)">
-        <span class="nav-ic">🗄</span> Vector DB
+      <button class="nb" id="nb-vdb"   onclick="navigate('vdb',this)">
+        <div class="nb-ic">🗄️</div><span class="nb-lbl">Vector DB</span>
       </button>
     </nav>
-
-    <div class="sidebar-foot">
-      <div class="live-badge">
-        <div class="live-dot"></div>
-        SYSTEM ONLINE
+    <div class="sb-foot">
+      <div class="sb-sys">
+        <div class="sys-led" id="sys-led"></div>
+        <span class="sys-txt" id="sys-txt">Connecting…</span>
+      </div>
+      <div class="sb-pts">
+        <span class="sb-pts-lbl">Session Score</span>
+        <span class="sb-pts-val" id="sb-score">0</span>
       </div>
     </div>
   </aside>
 
-  <!-- ── MAIN AREA ──────────────────────── -->
-  <div class="main-area">
+  <!-- MAIN -->
+  <div class="main">
 
     <!-- Topbar -->
     <div class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-breadcrumb">TELEBOT</span>
-        <span class="topbar-sep">/</span>
-        <span class="topbar-page" id="topbar-page">HOME</span>
+      <div class="tb-l">
+        <button class="hamburger" id="hamburger" onclick="toggleSidebar()" style="display:none">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="tb-crumb">
+          <span class="tb-root">TeleBot</span>
+          <span class="tb-sep">/</span>
+          <span class="tb-cur" id="tb-page">Dashboard</span>
+        </div>
       </div>
-      <div class="topbar-right">
-        <div class="score-pill">⚡ SCORE: <span id="topbar-score">0</span></div>
-        <div class="llm-pill off" id="llm-pill">○ CHECKING...</div>
+      <div class="tb-r">
+        <div class="chip" id="llm-pill">
+          <div class="chip-dot"></div>
+          <span id="ai-txt">Checking…</span>
+        </div>
+        <div class="chip chip-pts">
+          <span>⭐</span>
+          <span id="tb-score">0</span>
+          <span style="font-size:10px;opacity:.7">PTS</span>
+        </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         PAGE: HOME
-    ══════════════════════════════════════ -->
+    <!-- HOME -->
     <div class="page active" id="pg-home">
-
-      <!-- Hero -->
-      <div class="hero-card">
-        <div class="hero-eyebrow">▸ POWERED BY CHROMADB + CLAUDE AI (RAG)</div>
-        <h1 class="hero-h1">Master <em>Telecomm</em><br>with AI Intelligence</h1>
-        <p class="hero-p">Adaptive quizzes grounded in real plan data. Get deep AI explanations when you're wrong. Build real telecom expertise — powered by RAG architecture.</p>
-        <div class="hero-actions">
-          <button class="btn btn-ice" onclick="navigate('quiz', document.querySelectorAll('.nav-btn')[1])">▶ Start Quiz</button>
-          <button class="btn btn-outline" onclick="navigate('tutor', document.querySelectorAll('.nav-btn')[2])">⬡ Ask AI Tutor</button>
-          <button class="btn btn-ghost" onclick="navigate('plans', document.querySelectorAll('.nav-btn')[3])">▤ Explore Plans</button>
+      <div class="pw">
+        <div class="hero">
+          <div class="hero-grid"></div>
+          <div class="hero-badge"><div class="hb-dot"></div>RAG · Gemini 2.5 Flash · ChromaDB</div>
+          <h1 class="hero-h">Master <span class="gr">Telecomm</span><br>with AI Intelligence</h1>
+          <p class="hero-p">Adaptive quizzes grounded in real plan data. Deep AI explanations powered by semantic vector search — not guesswork.</p>
+          <div class="hero-btns">
+            <button class="btn btn-vi btn-lg" onclick="navigate('quiz',document.getElementById('nb-quiz'))">▶ &nbsp;Begin Quiz</button>
+            <button class="btn btn-gl" onclick="navigate('tutor',document.getElementById('nb-tutor'))">Ask AI Tutor →</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Stats row -->
-      <div class="g4" style="margin-bottom:26px">
-        <div class="stat-c"><div class="stat-ic">📄</div><div class="stat-num">8</div><div class="stat-lbl">Plans Indexed</div></div>
-        <div class="stat-c"><div class="stat-ic">◈</div><div class="stat-num">15</div><div class="stat-lbl">Quiz Questions</div></div>
-        <div class="stat-c"><div class="stat-ic">⚡</div><div class="stat-num">3</div><div class="stat-lbl">Difficulty Levels</div></div>
-        <div class="stat-c"><div class="stat-ic">🤖</div><div class="stat-num">RAG</div><div class="stat-lbl">AI Architecture</div></div>
-      </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-ico">📄</div><div class="stat-n">8</div><div class="stat-l">Plans Indexed</div></div>
+          <div class="stat"><div class="stat-ico">🎯</div><div class="stat-n">15</div><div class="stat-l">Quiz Questions</div></div>
+          <div class="stat"><div class="stat-ico">🔬</div><div class="stat-n">11</div><div class="stat-l">Tech Concepts</div></div>
+          <div class="stat"><div class="stat-ico">⚡</div><div class="stat-n vi">RAG</div><div class="stat-l">AI Architecture</div></div>
+        </div>
 
-      <!-- Feature cards -->
-      <div class="feat-grid">
-        <div class="feat-card">
-          <div class="feat-ic">🗄️</div>
-          <div class="feat-title">ChromaDB Vector Store</div>
-          <div class="feat-desc">All plan docs in <code>telecom_docs.txt</code> are embedded using <strong>all-MiniLM-L6-v2</strong> and stored in ChromaDB. Cosine similarity retrieval finds the most relevant context per query.</div>
+        <div class="feats">
+          <div class="feat">
+            <div class="feat-ico vi">🗄️</div>
+            <div class="feat-tt">ChromaDB Vector Store</div>
+            <div class="feat-ds">Plans embedded with all-MiniLM-L6-v2. Cosine similarity retrieval finds the most relevant context per query instantly.</div>
+          </div>
+          <div class="feat hi">
+            <div class="feat-ico vg">✨</div>
+            <div class="feat-tt">Gemini 2.5 Flash AI</div>
+            <div class="feat-ds">Every answer triggers Gemini 2.5 with RAG context injected. Explanations grounded in real plan specs — never hallucinated.</div>
+          </div>
+          <div class="feat">
+            <div class="feat-ico va">📡</div>
+            <div class="feat-tt">Telecom-Depth Coverage</div>
+            <div class="feat-ds">8 plans + 11 concepts: 5G, NB-IoT, LTE-M, VoLTE, eSIM, static IP, network slicing, MVNO, QoS, data rollover.</div>
+          </div>
         </div>
-        <div class="feat-card">
-          <div class="feat-ic">🤖</div>
-          <div class="feat-title">Claude LLM Explanations</div>
-          <div class="feat-desc">Wrong answers trigger <strong>claude-opus-4-5</strong> with RAG context injected into the prompt. Explanations are grounded in real plan specs — not hallucinated.</div>
-        </div>
-        <div class="feat-card">
-          <div class="feat-ic">📡</div>
-          <div class="feat-title">Telecom-Depth Coverage</div>
-          <div class="feat-desc">Covers 8 plans + 10 technical concepts: 5G, NB-IoT, LTE-M, VoLTE, eSIM, static IP, network slicing, MVNO, QoS, data rollover — sourced from <code>telecom_docs.txt</code>.</div>
-        </div>
-      </div>
 
-      <!-- Architecture flow -->
-      <div class="card" style="margin-top:8px">
-        <div class="sec-eyebrow" style="margin-bottom:16px">▸ RAG PIPELINE — HOW IT WORKS</div>
-        <div class="arch-flow">
-          <div class="arch-node"><div class="an-ic">📝</div><div class="an-lbl">DOCS</div><div class="an-sub">telecom_docs.txt</div></div>
-          <div class="arch-arr">→</div>
-          <div class="arch-node"><div class="an-ic">🔢</div><div class="an-lbl">EMBED</div><div class="an-sub">MiniLM vectors</div></div>
-          <div class="arch-arr">→</div>
-          <div class="arch-node"><div class="an-ic">🗄️</div><div class="an-lbl">CHROMADB</div><div class="an-sub">Cosine index</div></div>
-          <div class="arch-arr">→</div>
-          <div class="arch-node"><div class="an-ic">🔍</div><div class="an-lbl">RETRIEVE</div><div class="an-sub">Top-N results</div></div>
-          <div class="arch-arr">→</div>
-          <div class="arch-node"><div class="an-ic">🤖</div><div class="an-lbl">CLAUDE</div><div class="an-sub">Grounded answer</div></div>
-          <div class="arch-arr">→</div>
-          <div class="arch-node"><div class="an-ic">💡</div><div class="an-lbl">INSIGHT</div><div class="an-sub">Deep learning</div></div>
+        <div class="pipe-card">
+          <div class="pipe-lbl">RAG Pipeline</div>
+          <div class="pipe-flow">
+            <div class="pn"><div class="pn-ic">📝</div><div class="pn-nm">DOCS</div><div class="pn-sb">telecom_docs.txt</div></div>
+            <div class="pipe-arr">›</div>
+            <div class="pn"><div class="pn-ic">🔢</div><div class="pn-nm">EMBED</div><div class="pn-sb">MiniLM-L6-v2</div></div>
+            <div class="pipe-arr">›</div>
+            <div class="pn"><div class="pn-ic">🗄️</div><div class="pn-nm">CHROMA</div><div class="pn-sb">HNSW cosine</div></div>
+            <div class="pipe-arr">›</div>
+            <div class="pn"><div class="pn-ic">🔍</div><div class="pn-nm">RETRIEVE</div><div class="pn-sb">Top-N results</div></div>
+            <div class="pipe-arr">›</div>
+            <div class="pn lit"><div class="pn-ic">✦</div><div class="pn-nm">GEMINI</div><div class="pn-sb">Grounded answer</div></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         PAGE: QUIZ
-    ══════════════════════════════════════ -->
+    <!-- QUIZ -->
     <div class="page" id="pg-quiz">
-      <div class="quiz-wrap">
-
-        <div style="margin-bottom:26px">
-          <div class="sec-eyebrow">▸ ADAPTIVE ASSESSMENT</div>
-          <div class="sec-title">Quiz Mode</div>
-          <div class="sec-sub">Answer questions backed by real plan data. Get AI explanations powered by RAG + Claude.</div>
+      <div class="pw-quiz">
+        <div class="ph">
+          <div class="p-ey">Adaptive Assessment</div>
+          <h2 class="p-title">Quiz Mode</h2>
+          <p class="p-sub">Answer questions backed by real plan data. Get AI explanations powered by RAG + Gemini 2.5.</p>
         </div>
 
-        <!-- Difficulty filter -->
-        <div class="filter-bar" id="filter-bar">
-          <button class="fbtn active" onclick="setDifficulty('all', this)">ALL LEVELS</button>
-          <button class="fbtn easy"   onclick="setDifficulty('easy', this)">EASY</button>
-          <button class="fbtn medium" onclick="setDifficulty('medium', this)">MEDIUM</button>
-          <button class="fbtn hard"   onclick="setDifficulty('hard', this)">HARD</button>
+        <div class="diff-row" id="diff-row">
+          <button class="dt active"       onclick="setDiff('all',this)">ALL</button>
+          <button class="dt easy"         onclick="setDiff('easy',this)">EASY</button>
+          <button class="dt medium"       onclick="setDiff('medium',this)">MEDIUM</button>
+          <button class="dt hard"         onclick="setDiff('hard',this)">HARD</button>
         </div>
 
-        <!-- START SCREEN -->
-        <div class="quiz-start" id="quiz-start">
-          <span class="qs-icon">◈</span>
-          <div class="qs-h">Ready to Test Your Telecom Knowledge?</div>
-          <div class="qs-sub">Up to 8 questions · RAG-powered AI explanations · 3 difficulty levels</div>
+        <div class="qs" id="quiz-start">
+          <div class="qs-orb">📋</div>
+          <h3 class="qs-title">Ready to test your telecom knowledge?</h3>
+          <p class="qs-sub">8 questions · AI-powered explanations · RAG-grounded answers</p>
           <div class="qs-chips">
-            <span class="badge badge-lime">5G Technology</span>
-            <span class="badge badge-ice">IoT Protocols</span>
-            <span class="badge badge-amber">Business Plans</span>
-            <span class="badge badge-ice">International SIM</span>
-            <span class="badge badge-red">NB-IoT / LTE-M</span>
+            <span class="qchip qc-vi">5G Technology</span>
+            <span class="qchip qc-vg">IoT Protocols</span>
+            <span class="qchip qc-va">Business Plans</span>
+            <span class="qchip qc-vp">International</span>
+            <span class="qchip qc-vc">NB-IoT / LTE-M</span>
           </div>
-          <button class="btn btn-ice" onclick="startQuiz()">▶ Begin Assessment</button>
+          <button class="btn btn-vi btn-lg" onclick="startQuiz()">▶ &nbsp;Begin Assessment</button>
         </div>
 
-        <!-- ACTIVE QUIZ -->
         <div id="quiz-active" style="display:none">
-
-          <!-- Progress bar -->
-          <div class="prog-wrap">
-            <div class="prog-meta">
-              <span id="q-prog-lbl">QUESTION 1 OF 8</span>
-              <span id="q-score-lbl">SCORE: 0</span>
-            </div>
-            <div class="prog-track">
-              <div class="prog-fill" id="prog-fill" style="width:0%"></div>
-            </div>
+          <div class="q-prog">
+            <span class="qp-l" id="q-prog-lbl">Q 1 / 8</span>
+            <div class="qp-tr"><div class="qp-fi" id="prog-fill" style="width:0%"></div></div>
+            <span class="qp-s" id="q-score-lbl">0 pts</span>
           </div>
-
-          <!-- Question card -->
           <div class="q-card" id="q-card">
             <div class="q-meta">
-              <span id="q-idx" class="q-idx">Q01</span>
-              <span class="badge badge-lime" id="q-diff-badge">EASY</span>
-              <span class="badge badge-ice"  id="q-topic-badge">TOPIC</span>
+              <span class="q-num" id="q-idx">Q01</span>
+              <span class="diff-b easy" id="q-diff-b">EASY</span>
+              <span class="topic-b" id="q-topic-b">TOPIC</span>
             </div>
-            <div class="q-text" id="q-text">Loading question…</div>
-            <div class="options" id="options"></div>
+            <div class="q-txt" id="q-txt">Loading…</div>
+            <div class="opts" id="options"></div>
           </div>
-
-          <!-- Explanation panel -->
-          <div class="exp-card" id="exp-card">
-            <div class="exp-head" id="exp-head">🤖 AI Explanation</div>
-            <div class="exp-body" id="exp-body"></div>
+          <div class="exp" id="exp-card" style="display:none">
+            <div class="exp-hd th" id="exp-head">✦ AI Explanation</div>
+            <div class="exp-bd" id="exp-body"></div>
           </div>
-
-          <!-- Footer -->
-          <div class="q-footer">
-            <div></div>
-            <button class="btn btn-outline" id="next-btn" onclick="nextQuestion()" style="display:none">
-              NEXT →
-            </button>
+          <div class="q-foot">
+            <button class="btn btn-vi" id="next-btn" onclick="nextQ()" style="display:none">Next Question →</button>
           </div>
         </div>
 
-        <!-- SCORE SCREEN -->
-        <div class="score-screen" id="score-screen">
+        <div class="score-sc" id="score-screen" style="display:none">
           <span class="sc-emoji" id="sc-emoji">🎯</span>
+          <div class="sc-pct" id="sc-pct">0%</div>
           <div class="sc-title" id="sc-title">Assessment Complete</div>
-          <div class="sc-pct"   id="sc-pct">0%</div>
-          <div class="sc-sub"   id="sc-sub">0 correct out of 8 questions</div>
-          <div class="sc-grid">
-            <div><span class="scg-val" id="sc-correct">0</span><span class="scg-lbl">CORRECT</span></div>
-            <div><span class="scg-val" id="sc-wrong">0</span><span class="scg-lbl">INCORRECT</span></div>
-            <div><span class="scg-val" id="sc-score" style="color:var(--ice)">0</span><span class="scg-lbl">SCORE</span></div>
+          <p class="sc-sub" id="sc-sub">0 correct out of 8</p>
+          <div class="sc-row">
+            <div class="sc-bx g"><div class="sc-bv" id="sc-correct">0</div><div class="sc-bl">Correct</div></div>
+            <div class="sc-bx r"><div class="sc-bv" id="sc-wrong">0</div><div class="sc-bl">Wrong</div></div>
+            <div class="sc-bx v"><div class="sc-bv" id="sc-pts">0</div><div class="sc-bl">Points</div></div>
           </div>
-          <div class="sc-actions">
-            <button class="btn btn-ice" onclick="resetQuiz()">↺ RETRY</button>
-            <button class="btn btn-outline" onclick="navigate('tutor', document.querySelectorAll('.nav-btn')[2])">⬡ ASK TUTOR</button>
+          <div class="sc-acts">
+            <button class="btn btn-vi" onclick="resetQuiz()">↺ Try Again</button>
+            <button class="btn btn-gl" onclick="navigate('tutor',document.getElementById('nb-tutor'))">Ask AI Tutor</button>
           </div>
         </div>
-
-      </div><!-- /quiz-wrap -->
+      </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         PAGE: AI TUTOR
-    ══════════════════════════════════════ -->
+    <!-- TUTOR -->
     <div class="page" id="pg-tutor">
       <div class="tutor-wrap">
-
-        <div class="tutor-header">
-          <div class="sec-eyebrow">▸ RAG-POWERED CONVERSATIONAL AI</div>
-          <div class="sec-title">AI Telecom Tutor</div>
-          <div class="sec-sub">Ask anything about plans, 5G, NB-IoT, LTE-M, enterprise telecom, or IoT. Answers grounded in our knowledge base.</div>
+        <div class="tutor-hd">
+          <div class="p-ey">Conversational AI</div>
+          <h2 class="p-title">AI Telecom Tutor</h2>
+          <p class="tutor-desc">Ask anything — plans, protocols, 5G, IoT, enterprise, roaming. All answers grounded in the knowledge base.</p>
         </div>
-
-        <!-- Suggestion chips -->
-        <div class="sugg-chips" id="sugg-chips">
-          <span class="schip" onclick="useSuggestion(this)">What is NB-IoT vs LTE-M?</span>
-          <span class="schip" onclick="useSuggestion(this)">Compare BusinessElite vs FamilyShare Pro</span>
-          <span class="schip" onclick="useSuggestion(this)">Explain 5G latency advantages</span>
-          <span class="schip" onclick="useSuggestion(this)">Best plan for IoT smart meters?</span>
-          <span class="schip" onclick="useSuggestion(this)">What is a Static IP and when do I need it?</span>
+        <div class="sug-row" id="sug-row">
+          <button class="sug" onclick="sendSug(this)">What is NB-IoT vs LTE-M?</button>
+          <button class="sug" onclick="sendSug(this)">Compare BusinessElite vs FamilyShare Pro</button>
+          <button class="sug" onclick="sendSug(this)">Explain 5G latency advantages</button>
+          <button class="sug" onclick="sendSug(this)">Best plan for IoT smart meters?</button>
+          <button class="sug" onclick="sendSug(this)">What is a Static IP address?</button>
         </div>
-
-        <!-- Chat window -->
-        <div class="chat-box" id="chat-box">
+        <div class="chat-feed" id="chat-box">
           <div class="msg bot">
-            <div class="msg-av bot">📡</div>
-            <div class="msg-bub">
-              Hello! I'm <strong>TeleBot</strong> — your AI telecom tutor. I have access to detailed knowledge of our 8-plan portfolio, plus technical concepts covering 5G, NB-IoT, LTE-M, VoLTE, eSIM, static IP, and more.<br><br>
-              What would you like to explore today?
+            <div class="av av-bot">📡</div>
+            <div class="msg-body">
+              <div class="bubble b-bot">Hello! I'm <strong>TeleBot</strong> — your AI telecom tutor. I have access to our full 8-plan portfolio and technical concepts covering 5G, NB-IoT, LTE-M, VoLTE, eSIM, static IP, and more.<br><br>What would you like to explore today?</div>
+              <div class="msg-t">Just now</div>
             </div>
           </div>
         </div>
-
-        <!-- Input row -->
-        <div class="chat-input-row">
-          <textarea
-            class="chat-ta" id="chat-ta" rows="1"
-            placeholder="Ask about plans, protocols, speeds, pricing, IoT, enterprise features…"></textarea>
-          <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+        <div class="composer-wrap">
+          <div class="composer">
+            <textarea class="c-ta" id="chat-ta" rows="1" placeholder="Ask about plans, protocols, pricing, IoT, enterprise features…"></textarea>
+            <button class="send-btn" id="send-btn" onclick="sendMsg()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div class="c-hint">Enter to send · Shift+Enter for new line</div>
         </div>
-
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         PAGE: PLAN EXPLORER
-    ══════════════════════════════════════ -->
+    <!-- PLANS -->
     <div class="page" id="pg-plans">
-
-      <div style="margin-bottom:26px">
-        <div class="sec-eyebrow">▸ KNOWLEDGE BASE — telecom_docs.txt</div>
-        <div class="sec-title">Plan Explorer</div>
-        <div class="sec-sub">All 8 telecom plans — the data source for quiz questions and AI responses. Use semantic search to find plans by use-case.</div>
-      </div>
-
-      <div class="plans-search">
-        <input
-          class="search-in" id="plan-search"
-          placeholder="Search: 'iot low power', 'unlimited international', 'student', 'enterprise VPN'…"
-          oninput="filterPlans(this.value)">
-        <button class="btn btn-outline" onclick="filterPlans(document.getElementById('plan-search').value)">Search</button>
-        <button class="btn btn-ghost"   onclick="document.getElementById('plan-search').value=''; filterPlans('')">Clear</button>
-      </div>
-
-      <div class="plans-grid" id="plans-grid">
-        <!-- Rendered by script.js -->
+      <div class="pw-wide">
+        <div class="ph">
+          <div class="p-ey">Knowledge Base</div>
+          <h2 class="p-title">Plan Explorer</h2>
+          <p class="p-sub">All 8 telecom plans — the exact data used for quiz questions and AI responses.</p>
+        </div>
+        <div class="plan-sw">
+          <span class="search-ico">🔍</span>
+          <input class="plan-inp" id="plan-inp" placeholder="Search: 'iot', 'unlimited', 'student', '5G', 'enterprise'…" oninput="filterPlans(this.value)">
+          <button class="search-clr" onclick="document.getElementById('plan-inp').value='';filterPlans('')">✕</button>
+        </div>
+        <div class="plans-grid" id="plans-grid"></div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         PAGE: VECTOR DB
-    ══════════════════════════════════════ -->
+    <!-- VDB -->
     <div class="page" id="pg-vdb">
-      <div class="vdb-wrap">
-
-        <div style="margin-bottom:26px">
-          <div class="sec-eyebrow">▸ RETRIEVAL-AUGMENTED GENERATION</div>
-          <div class="sec-title">Vector DB Engine</div>
-          <div class="sec-sub">How <code>vector_db.py</code> powers semantic context retrieval using ChromaDB + all-MiniLM-L6-v2 embeddings.</div>
+      <div class="pw-wide">
+        <div class="ph">
+          <div class="p-ey">Retrieval-Augmented Generation</div>
+          <h2 class="p-title">Vector DB Engine</h2>
+          <p class="p-sub">How <code style="font-family:'Fira Code',monospace;font-size:13px;color:var(--vi2)">vector_db.py</code> powers semantic retrieval using ChromaDB + MiniLM embeddings.</p>
         </div>
-
-        <!-- Live stats -->
-        <div class="g4" style="margin-bottom:20px">
-          <div class="stat-c"><div class="stat-ic">🗄️</div><div class="stat-num" id="vdb-plans-n">8</div><div class="stat-lbl">Plans Indexed</div></div>
-          <div class="stat-c"><div class="stat-ic">📚</div><div class="stat-num" id="vdb-concepts-n">10</div><div class="stat-lbl">Concepts Indexed</div></div>
-          <div class="stat-c"><div class="stat-ic">🔢</div><div class="stat-num" style="font-size:18px" id="vdb-model">MiniLM</div><div class="stat-lbl">Embedding Model</div></div>
-          <div class="stat-c"><div class="stat-ic">📐</div><div class="stat-num" id="vdb-metric">cosine</div><div class="stat-lbl">Similarity Metric</div></div>
+        <div class="vdb-row">
+          <div class="vs"><div class="vs-n" id="vdb-plans">8</div><div class="vs-l">Plans Indexed</div></div>
+          <div class="vs"><div class="vs-n" id="vdb-concepts">11</div><div class="vs-l">Concepts Indexed</div></div>
+          <div class="vs"><div class="vs-n sm" id="vdb-model">MiniLM</div><div class="vs-l">Embedding Model</div></div>
+          <div class="vs"><div class="vs-n sm" id="vdb-metric">cosine</div><div class="vs-l">Similarity Metric</div></div>
         </div>
-
-        <!-- RAG flow -->
-        <div class="vdb-box">
-          <div class="vdb-box-title">📡 RAG Pipeline Flow</div>
-          <div class="arch-flow">
-            <div class="arch-node" style="min-width:90px"><div class="an-ic">📄</div><div class="an-lbl">DOCS</div><div class="an-sub">telecom_docs.txt</div></div>
-            <div class="arch-arr">→</div>
-            <div class="arch-node" style="min-width:90px"><div class="an-ic">🔢</div><div class="an-lbl">EMBED</div><div class="an-sub">all-MiniLM-L6-v2</div></div>
-            <div class="arch-arr">→</div>
-            <div class="arch-node" style="min-width:90px"><div class="an-ic">🗄️</div><div class="an-lbl">CHROMADB</div><div class="an-sub">HNSW cosine</div></div>
-            <div class="arch-arr">→</div>
-            <div class="arch-node" style="min-width:90px"><div class="an-ic">🔍</div><div class="an-lbl">QUERY</div><div class="an-sub">Top-N results</div></div>
+        <div class="pipe-card" style="margin-bottom:16px">
+          <div class="pipe-lbl">Pipeline</div>
+          <div class="pipe-flow">
+            <div class="pn"><div class="pn-ic">📄</div><div class="pn-nm">DOCS</div><div class="pn-sb">telecom_docs.txt</div></div>
+            <div class="pipe-arr">›</div>
+            <div class="pn"><div class="pn-ic">🔢</div><div class="pn-nm">EMBED</div><div class="pn-sb">all-MiniLM-L6-v2</div></div>
+            <div class="pipe-arr">›</div>
+            <div class="pn"><div class="pn-ic">🗄️</div><div class="pn-nm">CHROMA</div><div class="pn-sb">HNSW cosine</div></div>
+            <div class="pipe-arr">›</div>
+            <div class="pn lit"><div class="pn-ic">🔍</div><div class="pn-nm">RETRIEVE</div><div class="pn-sb">Top-N context</div></div>
           </div>
         </div>
-
-        <!-- vector_db.py code -->
-        <div class="vdb-box">
-          <div class="vdb-box-title">🗄️ vector_db.py — Indexing</div>
-          <div class="code-block">
-<span class="cm"># vector_db.py — ChromaDB setup</span>
-<span class="kw">import</span> chromadb
-<span class="kw">from</span> chromadb.utils <span class="kw">import</span> embedding_functions
-
-chroma_client = chromadb.<span class="fn">Client</span>()
-embedding_fn = embedding_functions.<span class="fn">DefaultEmbeddingFunction</span>()
-
-plan_collection = chroma_client.<span class="fn">create_collection</span>(
-    name=<span class="str">"telecom_plans"</span>,
-    embedding_function=embedding_fn,
-    metadata={<span class="str">"hnsw:space"</span>: <span class="str">"cosine"</span>}
+        <div class="code-c">
+          <div class="cc-hd">vector_db.py — Indexing</div>
+          <div class="cc-bd"><span class="ck">import</span> chromadb
+client = chromadb.<span class="cf">EphemeralClient</span>()
+col = client.<span class="cf">get_or_create_collection</span>(
+    name=<span class="cs">"telecom_plans"</span>,
+    metadata={<span class="cs">"hnsw:space"</span>: <span class="cs">"cosine"</span>}
 )
-
-<span class="cm"># Parse telecom_docs.txt → embed → store</span>
-plan_collection.<span class="fn">add</span>(
-    documents=plan_docs,   <span class="cm"># rich text per plan</span>
-    ids=plan_ids,          <span class="cm"># ["plan_001", ...]</span>
-    metadatas=plan_meta    <span class="cm"># {name, type, price}</span>
-)</div>
+col.<span class="cf">add</span>(documents=docs, ids=ids, metadatas=meta)</div>
         </div>
+        <div class="code-c">
+          <div class="cc-hd">vector_db.py — Semantic Retrieval</div>
+          <div class="cc-bd"><span class="ck">def</span> <span class="cf">retrieve</span>(query: str, n=<span class="cn">2</span>) -> str:
+    r = col.<span class="cf">query</span>(query_texts=[query], n_results=n)
+    <span class="ck">return</span> <span class="cs">"\n---\n"</span>.<span class="cf">join</span>(r[<span class="cs">"documents"</span>][<span class="cn">0</span>])
 
-        <!-- Retrieval code -->
-        <div class="vdb-box">
-          <div class="vdb-box-title">🔍 vector_db.py — Semantic Retrieval</div>
-          <div class="code-block">
-<span class="cm"># Retrieve at quiz evaluation / chat time</span>
-<span class="kw">def</span> <span class="fn">retrieve_plans</span>(query: str, n: <span class="num">int</span> = <span class="num">2</span>) -&gt; str:
-    results = plan_collection.<span class="fn">query</span>(
-        query_texts=[query],
-        n_results=n     <span class="cm"># top-N by cosine similarity</span>
-    )
-    <span class="kw">return</span> <span class="str">"\n\n---\n\n"</span>.<span class="fn">join</span>(results[<span class="str">"documents"</span>][<span class="num">0</span>])
-
-<span class="cm"># Example: "IoT M2M NB-IoT devices"</span>
-<span class="cm"># → Returns IoTConnect M2M plan document</span>
-<span class="cm"># → Injected into Claude prompt as grounding</span></div>
+<span class="cc"># "NB-IoT IoT low power" → IoTConnect M2M context</span>
+<span class="cc"># Injected into Gemini 2.5 prompt as grounding</span></div>
         </div>
-
-        <!-- LLM injection code -->
-        <div class="vdb-box">
-          <div class="vdb-box-title">🤖 llm_service.py — Prompt Injection</div>
-          <div class="code-block">
-<span class="cm"># llm_service.py — RAG context → Claude prompt</span>
-prompt = <span class="fn">f</span><span class="str">"""You are TeleBot, an expert telecom educator.
-
-QUESTION: {question_text}
-USER ANSWER:   {user_key}) {user_text}
-CORRECT ANSWER: {correct_key}) {correct_text}
-
-KNOWLEDGE BASE CONTEXT (from ChromaDB):
-{rag_context}
-
-Explain WHY using the context above as grounding.
-"""</span>
-
-response = client.messages.<span class="fn">create</span>(
-    model=<span class="str">"claude-opus-4-5"</span>,
-    max_tokens=<span class="num">450</span>,
-    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: prompt}]
-)</div>
-        </div>
-
-      </div><!-- /vdb-wrap -->
+      </div>
     </div>
 
-  </div><!-- /main-area -->
-</div><!-- /app-shell -->
+  </div>
+</div>
 
-<!-- Toast notification -->
-<div id="toast">
-  <span id="toast-icon">✓</span>
+<div class="toast" id="toast">
+  <span id="toast-ico">✦</span>
   <span id="toast-msg">Done</span>
 </div>
 
-<!-- Link JS last -->
 <script src="script.js"></script>
 </body>
 </html>

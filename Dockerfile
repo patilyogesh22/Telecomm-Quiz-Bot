@@ -15,8 +15,8 @@ RUN pip install --upgrade pip \
  && pip install --no-cache-dir -r requirements.txt
 
 # Copy only required folders
-COPY backend ./backend
-COPY frontend ./frontend
+COPY backend ./
+COPY frontend ./
 
 EXPOSE 5000
 
