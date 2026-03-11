@@ -22,7 +22,6 @@ jobs:
 
           script: |
             docker-compose down --remove-orphans
-            docker image rm yogeshpatil22/telebot:latest || true
             docker pull yogeshpatil22/telebot:latest
             docker-compose up -d --force-recreate
             docker image prune -f
