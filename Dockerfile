@@ -25,4 +25,4 @@ COPY frontend ./frontend
 EXPOSE 5000
 
 # Production server
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "backend.app:app"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app"]
